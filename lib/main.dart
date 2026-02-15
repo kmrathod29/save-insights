@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'core/theme/app_theme.dart';
 import 'screens/splash_screen.dart';
+import 'screens/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFF1C1930),
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
   runApp(const SaveInsightApp());
 }
 
@@ -11,19 +24,23 @@ class SaveInsightApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // App Configuration
       title: 'SaveInsight',
       debugShowCheckedModeBanner: false,
-
-      // Theme
-      theme: ThemeData(
-        scaffoldBackgroundColor: const Color(0xFFF6F7F9), // Soft Off-White
-        primaryColor: const Color(0xFF1E1F3B), // Midnight Indigo
-        useMaterial3: true,
+      theme: AppTheme.lightTheme.copyWith(
+        textTheme: AppTheme.lightTheme.textTheme.apply(
+          fontFamily: 'AppFont',
+        ),
       ),
-
-      // Initial Route
-      home: const SplashScreen(),
+      darkTheme: AppTheme.darkTheme.copyWith(
+        textTheme: AppTheme.darkTheme.textTheme.apply(
+          fontFamily: 'AppFont',
+        ),
+      ),
+      themeMode: ThemeMode.dark,
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/home': (context) => const HomeScreen(),
+      },
     );
   }
 }

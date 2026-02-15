@@ -1,8 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
 
-/// Splash Screen for SaveInsight app
-/// Displays branding and loads initial app resources
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -11,82 +9,116 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  double _opacity = 0.0;
+
+  static const Color _softGrey = Color(0xFF9FA3C8);
+
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
-  }
 
-  /// Navigate to home screen after 3 seconds
-  Future<void> _navigateToHome() async {
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
-    }
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          _opacity = 1.0;
+        });
+      }
+    });
+
+    Future.delayed(const Duration(seconds: 4), () {
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7F9), // Soft Off-White
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Brain Logo
-            Image.asset(
-              'assets/logo.png',
-              width: 120,
-              height: 120,
-            ),
-
-            const SizedBox(height: 32),
-
-            // App Name
-            const Text(
-              'SAVE INSIGHT',
-              style: TextStyle(
-                fontSize: 32,
-                fontFamily: 'Neue Machina',
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2.0,
-                color: Color(0xFF1E1F3B), // Midnight Indigo
+      body: Stack(
+        children: [
+          _buildGradientBackground(),
+          SafeArea(
+            child: Center(
+              child: AnimatedOpacity(
+                opacity: _opacity,
+                duration: const Duration(milliseconds: 800),
+                child: _buildGlassContainer(),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 8),
+  Widget _buildGradientBackground() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFF151326),
+            Color(0xFF1C1930),
+            Color(0xFF272240),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+    );
+  }
 
-            // Subtitle
-            const Text(
-              'Personal Knowledge',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.5,
-                color: Color(0xFF6B7280), // Slate Grey
-              ),
+  Widget _buildGlassContainer() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+        child: Container(
+          width: 320,
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 36),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
+              width: 1.5,
             ),
-
-            const SizedBox(height: 48),
-
-            // Loading Indicator
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Color(0xFF6D6AF0), // Muted Violet
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.asset(
+                'assets/logo.png',
+                height: 90,
+                color: Colors.white70,
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'SaveInsight',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontFamily: 'Sora',
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              const Text(
+                'Your Second Brain',
+                style: TextStyle(
+                  color: _softGrey,
+                  fontSize: 15,
+                  fontFamily: 'neuemachina',
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

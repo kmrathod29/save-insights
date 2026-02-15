@@ -2,7 +2,7 @@ name: save_insights_code
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -63,14 +63,39 @@ flutter:
     - assets/logo.png
 
   fonts:
-    - family: Inter
+    - family: AppFont
       fonts:
-        - asset: assets/fonts/NeueMachina-Light.otf
-          weight: 500
+        # - asset: assets/fonts/Inter-Regular.otf
+        - asset: assets/fonts/Inter-Medium.otf
+        # - asset: assets/fonts/Inter-SemiBold.otf
+        # weight: 700
+
+    - family: PlayfairDisplay
+      fonts:
+        # - asset: assets/fonts/PlayfairDisplay-Regular.ttf
+        - asset: assets/fonts/PlayfairDisplay-Bold.ttf
+
+    - family: Coolvetica
+      fonts:
+        - asset: assets/fonts/Coolvetica Hv Comp.otf
+
+    - family : SfUiDisplay 
+      fonts:
+        - asset: assets/fonts/sf-ui-display-bold-58646a511e3d9.otf
+       
+    - family: Sora
+      fonts:
+        - asset: assets/fonts/Sora-BoldItalic.otf
+        # - asset: assets/fonts/Sora-Bold.otf
+
+    - family: NeueMachina
+      fonts:
+        # - asset: assets/fonts/NeueMachina-Light.otf
+        #   weight: 500
         - asset: assets/fonts/NeueMachina-Regular.otf
           weight: 600
-        - asset: assets/fonts/NeueMachina-Ultrabold.otf
-          weight: 700
+        # - asset: assets/fonts/NeueMachina-Ultrabold.otf
+        #   weight: 700
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
