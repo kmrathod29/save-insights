@@ -105,7 +105,7 @@ class _MainShellState extends State<MainShell> {
           // FAB — only visible on Home tab
           if (_selectedIndex == 0)
             Positioned(
-              bottom: 95,
+              bottom: 105,
               right: 15,
               child: SafeArea(
                 top: false,
@@ -133,8 +133,8 @@ class _MainShellState extends State<MainShell> {
         );
       },
       child: Container(
-        width: 54,
-        height: 54,
+        width: 50,
+        height: 50,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [_accentColor, Color(0xFF5A4FE8)],
