@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
 
-  static const Color _softGrey = Color(0xFF9FA3C8);
-
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
@@ -16,10 +17,10 @@ class FavoritesScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Favorites',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: c.textPrimary,
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,
@@ -29,12 +30,12 @@ class FavoritesScreen extends StatelessWidget {
                 Center(
                   child: Column(
                     children: [
-                      Icon(Icons.favorite_border, size: 64, color: _softGrey.withValues(alpha: 0.4)),
+                      Icon(Icons.favorite_border, size: 64, color: c.textSecondary.withValues(alpha: 0.4)),
                       const SizedBox(height: 16),
                       Text(
                         'No favorites yet',
                         style: TextStyle(
-                          color: _softGrey.withValues(alpha: 0.6),
+                          color: c.textSecondary.withValues(alpha: 0.6),
                           fontSize: 16,
                         ),
                       ),
@@ -42,7 +43,7 @@ class FavoritesScreen extends StatelessWidget {
                       Text(
                         'Insights you mark as favorite will appear here.',
                         style: TextStyle(
-                          color: _softGrey.withValues(alpha: 0.4),
+                          color: c.textSecondary.withValues(alpha: 0.4),
                           fontSize: 14,
                         ),
                         textAlign: TextAlign.center,

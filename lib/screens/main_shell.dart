@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 import 'home_screen.dart';
 import 'search_screen.dart';
 import 'folders_screen.dart';
@@ -20,10 +21,6 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
 
-  static const Color _accentColor = Color(0xFF6C63FF);
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _softGrey = Color(0xFF9FA3C8);
-
   static const _pages = <Widget>[
     HomeScreen(),
     SearchScreen(),
@@ -40,18 +37,16 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
           // Shared gradient background
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF151326),
-                  Color(0xFF1C1930),
-                  Color(0xFF272240),
-                ],
+                colors: c.backgroundGradient,
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -80,8 +75,8 @@ class _MainShellState extends State<MainShell> {
                     center: Alignment.bottomCenter,
                     radius: 1.2,
                     colors: [
-                      _accentColor.withValues(alpha: 0.10),
-                      _accentColor.withValues(alpha: 0.04),
+                      c.accent.withValues(alpha: c.glowAlpha1),
+                      c.accent.withValues(alpha: c.glowAlpha2),
                       Colors.transparent,
                     ],
                     stops: const [0.0, 0.4, 1.0],
@@ -98,7 +93,7 @@ class _MainShellState extends State<MainShell> {
             right: 0,
             child: SafeArea(
               top: false,
-              child: _buildFloatingNavBar(),
+              child: _buildFloatingNavBar(c),
             ),
           ),
 
@@ -109,7 +104,7 @@ class _MainShellState extends State<MainShell> {
               right: 15,
               child: SafeArea(
                 top: false,
-                child: _buildFloatingActionButton(),
+                child: _buildFloatingActionButton(c),
               ),
             ),
         ],
@@ -117,7 +112,7 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  Widget _buildFloatingActionButton() {
+  Widget _buildFloatingActionButton(AppThemeColors c) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -136,21 +131,21 @@ class _MainShellState extends State<MainShell> {
         width: 50,
         height: 50,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [_accentColor, Color(0xFF5A4FE8)],
+          gradient: LinearGradient(
+            colors: [c.fabPrimary, c.fabSecondary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
-              color: _accentColor.withValues(alpha: 0.40),
+              color: c.fabPrimary.withValues(alpha: c.fabGlowAlpha),
               blurRadius: 10,
               spreadRadius: 0,
               offset: const Offset(0, 3),
             ),
             BoxShadow(
-              color: _accentColor.withValues(alpha: 0.20),
+              color: c.fabPrimary.withValues(alpha: c.fabGlowAlpha * 0.5),
               blurRadius: 20,
               spreadRadius: 2,
               offset: const Offset(0, 6),
@@ -162,7 +157,7 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  Widget _buildFloatingNavBar() {
+  Widget _buildFloatingNavBar(AppThemeColors c) {
     const navItems = [
       {'icon': Icons.home, 'label': 'Home'},
       {'icon': Icons.search, 'label': 'Search'},
@@ -179,21 +174,21 @@ class _MainShellState extends State<MainShell> {
           filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
           child: Container(
             decoration: BoxDecoration(
-              color: _cardBg.withValues(alpha: 0.92),
+              color: c.navBarBackground,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: c.navBarBorder,
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
+                  color: c.cardShadow,
                   blurRadius: 20,
                   spreadRadius: 2,
                   offset: const Offset(0, -2),
                 ),
                 BoxShadow(
-                  color: _accentColor.withValues(alpha: 0.06),
+                  color: c.accent.withValues(alpha: c.isDark ? 0.06 : 0.03),
                   blurRadius: 30,
                   spreadRadius: 0,
                 ),
@@ -207,6 +202,7 @@ class _MainShellState extends State<MainShell> {
                     navItems[i]['icon'] as IconData,
                     navItems[i]['label'] as String,
                     i,
+                    c,
                   ),
               ],
             ),
@@ -216,7 +212,8 @@ class _MainShellState extends State<MainShell> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, String label, int index) {
+  Widget _buildNavItem(
+      IconData icon, String label, int index, AppThemeColors c) {
     final isActive = _selectedIndex == index;
 
     return GestureDetector(
@@ -227,12 +224,13 @@ class _MainShellState extends State<MainShell> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 24, color: isActive ? _accentColor : _softGrey),
+            Icon(icon,
+                size: 24, color: isActive ? c.accent : c.navInactive),
             const SizedBox(height: 6),
             Text(
               label,
               style: TextStyle(
-                color: isActive ? _accentColor : _softGrey,
+                color: isActive ? c.accent : c.navInactive,
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
               ),

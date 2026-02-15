@@ -1,52 +1,49 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const Color _accentColor = Color(0xFF6C63FF);
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _pillBg = Color(0xFF2A2750);
-  static const Color _softGrey = Color(0xFF9FA3C8);
-
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
         const SliverToBoxAdapter(child: SizedBox(height: 12)),
-        SliverToBoxAdapter(child: _buildTopBar()),
+        SliverToBoxAdapter(child: _buildTopBar(context, c)),
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(child: _buildGreetingSection()),
+        SliverToBoxAdapter(child: _buildGreetingSection(c)),
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(child: _buildStatsSection()),
+        SliverToBoxAdapter(child: _buildStatsSection(c)),
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(child: _buildQuickActionsSection()),
+        SliverToBoxAdapter(child: _buildQuickActionsSection(c)),
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(child: _buildFoldersSection()),
+        SliverToBoxAdapter(child: _buildFoldersSection(c)),
         const SliverToBoxAdapter(child: SizedBox(height: 28)),
-        SliverToBoxAdapter(child: _buildRecentInsightsSection()),
+        SliverToBoxAdapter(child: _buildRecentInsightsSection(c)),
         const SliverToBoxAdapter(child: SizedBox(height: 140)),
       ],
     );
   }
 
-  Widget _buildTopBar() {
-    return Builder(builder: (context) {
+  Widget _buildTopBar(BuildContext context, AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          Image.asset('assets/logo.png', height: 46, color: Colors.white70),
+          Image.asset('assets/logo.png', height: 46, color: c.logoTint),
           const SizedBox(width: 14),
-          const Padding(
-            padding: EdgeInsets.only(top: 2),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
             child: Text(
               'SaveInsight',
               style: TextStyle(
-                color: Colors.white,
+                color: c.textPrimary,
                 fontFamily: 'neuemachina',
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -72,42 +69,37 @@ class HomeScreen extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.09),
-                  width: 1.5,
-                ),
+                border: Border.all(color: c.avatarBorder, width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
+                    color: c.cardShadow,
                     blurRadius: 10,
                     spreadRadius: 1,
                   ),
                 ],
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 20,
-                backgroundColor: _cardBg,
-                child: Icon(Icons.person, color: _softGrey, size: 20),
+                backgroundColor: c.avatarBg,
+                child: Icon(Icons.person, color: c.avatarIcon, size: 20),
               ),
             ),
           ),
         ],
       ),
     );
-    });
   }
 
-  // D) Improved typography hierarchy
-  Widget _buildGreetingSection() {
+  Widget _buildGreetingSection(AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Good Evening, Krunal',
             style: TextStyle(
-              color: Colors.white,
+              color: c.textPrimary,
               fontSize: 34,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.3,
@@ -117,7 +109,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             'Capture ideas before they disappear.',
             style: TextStyle(
-              color: _softGrey.withValues(alpha: 0.75),
+              color: c.textSecondary.withValues(alpha: 0.75),
               fontSize: 16,
               fontWeight: FontWeight.w400,
             ),
@@ -127,41 +119,44 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsSection() {
+  Widget _buildStatsSection(AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
         children: [
-          _buildStatCard('48', 'Texts'),
+          _buildStatCard('48', 'Texts', c),
           const SizedBox(width: 12),
-          _buildStatCard('23', 'Images'),
+          _buildStatCard('23', 'Images', c),
           const SizedBox(width: 12),
-          _buildStatCard('12', 'Videos'),
+          _buildStatCard('12', 'Videos', c),
         ],
       ),
     );
   }
 
-  // C) Micro tap scale on stat cards
-  Widget _buildStatCard(String count, String label) {
+  Widget _buildStatCard(String count, String label, AppThemeColors c) {
     return Expanded(
       child: _TapScaleCard(
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: _cardBg,
+            color: c.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.05),
-              width: 1,
-            ),
+            border: Border.all(color: c.borderSubtle, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: c.cardShadow,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             children: [
               Text(
                 count,
-                style: const TextStyle(
-                  color: _accentColor,
+                style: TextStyle(
+                  color: c.accent,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -169,8 +164,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 label,
-                style: const TextStyle(
-                  color: _softGrey,
+                style: TextStyle(
+                  color: c.textSecondary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -182,16 +177,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsSection() {
+  Widget _buildQuickActionsSection(AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Quick Actions',
             style: TextStyle(
-              color: Colors.white,
+              color: c.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -200,11 +195,11 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Row(
             children: [
-              _buildActionCard(Icons.text_fields, 'Add Text'),
+              _buildActionCard(Icons.text_fields, 'Add Text', c),
               const SizedBox(width: 12),
-              _buildActionCard(Icons.image_search, 'Scan OCR'),
+              _buildActionCard(Icons.image_search, 'Scan OCR', c),
               const SizedBox(width: 12),
-              _buildActionCard(Icons.link, 'Add Link'),
+              _buildActionCard(Icons.link, 'Add Link', c),
             ],
           ),
         ],
@@ -212,30 +207,33 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // C) Micro tap scale on action cards
-  Widget _buildActionCard(IconData icon, String label) {
+  Widget _buildActionCard(IconData icon, String label, AppThemeColors c) {
     return Expanded(
       child: _TapScaleCard(
         child: Container(
           height: 130,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
           decoration: BoxDecoration(
-            color: _cardBg,
+            color: c.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.05),
-              width: 1,
-            ),
+            border: Border.all(color: c.borderSubtle, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: c.cardShadow,
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 36, color: _accentColor),
+              Icon(icon, size: 36, color: c.accent),
               const SizedBox(height: 12),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: c.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -250,16 +248,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFoldersSection() {
+  Widget _buildFoldersSection(AppThemeColors c) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
             'Folders',
             style: TextStyle(
-              color: Colors.white,
+              color: c.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -272,13 +270,13 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             children: [
-              _buildFolderPill('Work', true),
+              _buildFolderPill('Work', true, c),
               const SizedBox(width: 12),
-              _buildFolderPill('Personal', false),
+              _buildFolderPill('Personal', false, c),
               const SizedBox(width: 12),
-              _buildFolderPill('Ideas', false),
+              _buildFolderPill('Ideas', false, c),
               const SizedBox(width: 12),
-              _buildFolderPill('+ Add', false),
+              _buildFolderPill('+ Add', false, c),
             ],
           ),
         ),
@@ -286,21 +284,21 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFolderPill(String label, bool isActive) {
+  Widget _buildFolderPill(String label, bool isActive, AppThemeColors c) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
-        color: isActive ? _accentColor : _pillBg,
+        color: isActive ? c.folderActiveBg : c.folderInactiveBg,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isActive ? _accentColor : Colors.white.withValues(alpha: 0.1),
+          color: isActive ? c.folderActiveBg : c.folderInactiveBorder,
           width: 1.5,
         ),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? Colors.white : Colors.white70,
+          color: isActive ? Colors.white : c.folderInactiveText,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -308,16 +306,16 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRecentInsightsSection() {
+  Widget _buildRecentInsightsSection(AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Recent Insights',
             style: TextStyle(
-              color: Colors.white,
+              color: c.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.5,
@@ -328,44 +326,51 @@ class HomeScreen extends StatelessWidget {
             'Flutter Best Practices',
             'Building scalable applications...',
             'Today',
+            c,
           ),
           const SizedBox(height: 12),
           _buildInsightCard(
             'UI Design Trends',
             'Modern minimalism in design...',
             'Yesterday',
+            c,
           ),
           const SizedBox(height: 12),
           _buildInsightCard(
             'Mobile Development',
             'Cross-platform strategies...',
             '2 days ago',
+            c,
           ),
         ],
       ),
     );
   }
 
-  // C) Micro tap scale on insight cards
-  Widget _buildInsightCard(String title, String preview, String date) {
+  Widget _buildInsightCard(
+      String title, String preview, String date, AppThemeColors c) {
     return _TapScaleCard(
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: _cardBg,
+          color: c.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.08),
-            width: 1,
-          ),
+          border: Border.all(color: c.border, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: c.cardShadow,
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: c.textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -375,8 +380,8 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               preview,
-              style: const TextStyle(
-                color: _softGrey,
+              style: TextStyle(
+                color: c.textSecondary,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               ),
@@ -389,13 +394,13 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Text(
                   date,
-                  style: const TextStyle(
-                    color: _softGrey,
+                  style: TextStyle(
+                    color: c.textSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                const Icon(Icons.note, size: 16, color: _accentColor),
+                Icon(Icons.note, size: 16, color: c.accent),
               ],
             ),
           ],

@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  static const Color _accentColor = Color(0xFF6C63FF);
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _softGrey = Color(0xFF9FA3C8);
-
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
-          // Dark gradient background
+          // Gradient background
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF151326),
-                  Color(0xFF1C1930),
-                  Color(0xFF272240),
-                ],
+                colors: c.backgroundGradient,
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -34,30 +29,30 @@ class ProfileScreen extends StatelessWidget {
               ),
               slivers: [
                 // Back button + title
-                SliverToBoxAdapter(child: _buildHeader(context)),
+                SliverToBoxAdapter(child: _buildHeader(context, c)),
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
                 // Avatar
-                const SliverToBoxAdapter(child: _ProfileAvatar()),
+                SliverToBoxAdapter(child: _ProfileAvatar(colors: c)),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
                 // Name & email
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Column(
                     children: [
                       Text(
                         'Krunal Rathod',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: c.textPrimary,
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(
                         'krunal@saveinsight.app',
                         style: TextStyle(
-                          color: _softGrey,
+                          color: c.textSecondary,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                         ),
@@ -77,24 +72,28 @@ class ProfileScreen extends StatelessWidget {
                           Icons.person_outline,
                           'Edit Profile',
                           'Update your personal information',
+                          c,
                         ),
                         const SizedBox(height: 12),
                         _buildProfileTile(
                           Icons.shield_outlined,
                           'Privacy',
                           'Manage your data and permissions',
+                          c,
                         ),
                         const SizedBox(height: 12),
                         _buildProfileTile(
                           Icons.cloud_upload_outlined,
                           'Backup & Sync',
                           'Keep your insights safe',
+                          c,
                         ),
                         const SizedBox(height: 12),
                         _buildProfileTile(
                           Icons.help_outline,
                           'Help & Support',
                           'Get help from our team',
+                          c,
                         ),
                         const SizedBox(height: 24),
                         _buildLogoutButton(),
@@ -111,36 +110,36 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 12, 24, 0),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new,
-              color: Colors.white,
+              color: c.textPrimary,
               size: 20,
             ),
           ),
           const SizedBox(width: 4),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Profile',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: c.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 'Your account details',
                 style: TextStyle(
-                  color: _softGrey,
+                  color: c.textSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -152,16 +151,21 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileTile(IconData icon, String title, String subtitle) {
+  Widget _buildProfileTile(
+      IconData icon, String title, String subtitle, AppThemeColors c) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: c.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
-          width: 1,
-        ),
+        border: Border.all(color: c.border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: c.cardShadow,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -169,10 +173,10 @@ class ProfileScreen extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: _accentColor.withValues(alpha: 0.12),
+              color: c.accent.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: _accentColor, size: 20),
+            child: Icon(icon, color: c.accent, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -181,8 +185,8 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: c.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -190,8 +194,8 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    color: _softGrey,
+                  style: TextStyle(
+                    color: c.textSecondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                   ),
@@ -199,7 +203,7 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: _softGrey, size: 20),
+          Icon(Icons.chevron_right, color: c.textSecondary, size: 20),
         ],
       ),
     );
@@ -231,34 +235,32 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class _ProfileAvatar extends StatelessWidget {
-  const _ProfileAvatar();
-
-  static const Color _accentColor = Color(0xFF6C63FF);
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _softGrey = Color(0xFF9FA3C8);
+  final AppThemeColors colors;
+  const _ProfileAvatar({required this.colors});
 
   @override
   Widget build(BuildContext context) {
+    final c = colors;
     return Center(
       child: Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: _accentColor.withValues(alpha: 0.3),
+            color: c.accent.withValues(alpha: 0.3),
             width: 2.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: _accentColor.withValues(alpha: 0.15),
+              color: c.accent.withValues(alpha: 0.15),
               blurRadius: 20,
               spreadRadius: 2,
             ),
           ],
         ),
-        child: const CircleAvatar(
+        child: CircleAvatar(
           radius: 48,
-          backgroundColor: _cardBg,
-          child: Icon(Icons.person, color: _softGrey, size: 44),
+          backgroundColor: c.avatarBg,
+          child: Icon(Icons.person, color: c.avatarIcon, size: 44),
         ),
       ),
     );

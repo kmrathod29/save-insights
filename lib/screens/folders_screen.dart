@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 
 class FoldersScreen extends StatelessWidget {
   const FoldersScreen({super.key});
 
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _softGrey = Color(0xFF9FA3C8);
-  static const Color _accentColor = Color(0xFF6C63FF);
-
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
@@ -18,23 +17,23 @@ class FoldersScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Folders',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: c.textPrimary,
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.3,
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildFolderTile('Work', Icons.work, 12),
+                _buildFolderTile('Work', Icons.work, 12, c),
                 const SizedBox(height: 12),
-                _buildFolderTile('Personal', Icons.person, 8),
+                _buildFolderTile('Personal', Icons.person, 8, c),
                 const SizedBox(height: 12),
-                _buildFolderTile('Ideas', Icons.lightbulb, 15),
+                _buildFolderTile('Ideas', Icons.lightbulb, 15, c),
                 const SizedBox(height: 12),
-                _buildFolderTile('Research', Icons.science, 5),
+                _buildFolderTile('Research', Icons.science, 5, c),
               ],
             ),
           ),
@@ -43,32 +42,37 @@ class FoldersScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFolderTile(String name, IconData icon, int count) {
+  Widget _buildFolderTile(String name, IconData icon, int count, AppThemeColors c) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: c.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.05),
-        ),
+        border: Border.all(color: c.borderSubtle),
+        boxShadow: [
+          BoxShadow(
+            color: c.cardShadow,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _accentColor.withValues(alpha: 0.15),
+              color: c.accent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: _accentColor, size: 22),
+            child: Icon(icon, color: c.accent, size: 22),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Text(
               name,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: c.textPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -76,10 +80,10 @@ class FoldersScreen extends StatelessWidget {
           ),
           Text(
             '$count items',
-            style: const TextStyle(color: _softGrey, fontSize: 13),
+            style: TextStyle(color: c.textSecondary, fontSize: 13),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.chevron_right, color: _softGrey, size: 20),
+          Icon(Icons.chevron_right, color: c.textSecondary, size: 20),
         ],
       ),
     );

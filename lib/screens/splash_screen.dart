@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,8 +11,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   double _opacity = 0.0;
-
-  static const Color _softGrey = Color(0xFF9FA3C8);
 
   @override
   void initState() {
@@ -34,16 +33,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
-          _buildGradientBackground(),
+          _buildGradientBackground(c),
           SafeArea(
             child: Center(
               child: AnimatedOpacity(
                 opacity: _opacity,
                 duration: const Duration(milliseconds: 800),
-                child: _buildGlassContainer(),
+                child: _buildGlassContainer(c),
               ),
             ),
           ),
@@ -52,17 +53,13 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Widget _buildGradientBackground() {
+  Widget _buildGradientBackground(AppThemeColors c) {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF151326),
-            Color(0xFF1C1930),
-            Color(0xFF272240),
-          ],
+          colors: c.backgroundGradient,
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
@@ -70,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Widget _buildGlassContainer() {
+  Widget _buildGlassContainer(AppThemeColors c) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(28),
       child: BackdropFilter(
@@ -79,12 +76,23 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 320,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 36),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.05),
+            color: c.isDark
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.white.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(28),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: c.isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : const Color(0xFFE6E4F2),
               width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: c.cardShadow,
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -92,13 +100,13 @@ class _SplashScreenState extends State<SplashScreen> {
               Image.asset(
                 'assets/logo.png',
                 height: 90,
-                color: Colors.white70,
+                color: c.logoTint,
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'SaveInsight',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: c.textPrimary,
                   fontSize: 30,
                   fontFamily: 'neuemachina',
                   fontWeight: FontWeight.bold,
@@ -106,10 +114,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Your Second Brain',
                 style: TextStyle(
-                  color: _softGrey,
+                  color: c.textSecondary,
                   fontSize: 15,
                   fontFamily: 'playfairdisplay',
                   fontWeight: FontWeight.w400,

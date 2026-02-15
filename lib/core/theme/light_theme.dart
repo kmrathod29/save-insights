@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
 
 class LightTheme {
   static ThemeData get theme {
@@ -7,11 +6,14 @@ class LightTheme {
       useMaterial3: true,
       brightness: Brightness.light,
 
-      scaffoldBackgroundColor: AppColors.lightBackground,
+      scaffoldBackgroundColor: Colors.transparent,
 
-      colorScheme: ColorScheme.light(
-        primary: AppColors.primary,
-        surface: AppColors.lightSurface,
+      colorScheme: const ColorScheme.light(
+        primary: Color(0xFF272240),
+        secondary: Color(0xFF6C63FF),
+        surface: Color(0xFFFFFFFF),
+        onPrimary: Colors.white,
+        onSurface: Color(0xFF1A1825),
       ),
 
       textTheme: const TextTheme(
@@ -19,13 +21,16 @@ class LightTheme {
           fontSize: 28,
           fontWeight: FontWeight.bold,
           letterSpacing: 0.5,
+          color: Color(0xFF1A1825),
         ),
         titleMedium: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
+          color: Color(0xFF1A1825),
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
+          color: Color(0xFF6F6C8F),
         ),
       ),
 
@@ -34,7 +39,11 @@ class LightTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        color: AppColors.lightSurface,
+        color: const Color(0xFFFFFFFF),
+      ),
+
+      iconTheme: const IconThemeData(
+        color: Color(0xFF6F6C8F),
       ),
     );
   }

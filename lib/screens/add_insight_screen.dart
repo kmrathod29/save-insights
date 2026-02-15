@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/app_theme_colors.dart';
 
 class AddInsightScreen extends StatefulWidget {
   const AddInsightScreen({super.key});
@@ -8,10 +9,6 @@ class AddInsightScreen extends StatefulWidget {
 }
 
 class _AddInsightScreenState extends State<AddInsightScreen> {
-  static const Color _accentColor = Color(0xFF6C63FF);
-  static const Color _cardBg = Color(0xFF1E1B36);
-  static const Color _softGrey = Color(0xFF9FA3C8);
-
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   String _selectedFolder = 'Work';
@@ -25,18 +22,16 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppThemeColors.of(context);
+
     return Scaffold(
       body: Stack(
         children: [
-          // Dark gradient background
+          // Gradient background
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF151326),
-                  Color(0xFF1C1930),
-                  Color(0xFF272240),
-                ],
+                colors: c.backgroundGradient,
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -50,7 +45,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
               ),
               slivers: [
                 // Header
-                SliverToBoxAdapter(child: _buildHeader()),
+                SliverToBoxAdapter(child: _buildHeader(c)),
                 const SliverToBoxAdapter(child: SizedBox(height: 28)),
 
                 // Title field
@@ -60,10 +55,10 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Title',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: c.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -73,6 +68,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                           controller: _titleController,
                           hint: 'Give your insight a title...',
                           maxLines: 1,
+                          c: c,
                         ),
                       ],
                     ),
@@ -87,10 +83,10 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Content',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: c.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -100,6 +96,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                           controller: _contentController,
                           hint: 'Write your insight here...',
                           maxLines: 8,
+                          c: c,
                         ),
                       ],
                     ),
@@ -114,16 +111,16 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Folder',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: c.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 10),
-                        _buildFolderChips(),
+                        _buildFolderChips(c),
                       ],
                     ),
                   ),
@@ -137,10 +134,10 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Attachments',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: c.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -148,13 +145,15 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            _buildAttachButton(Icons.image_outlined, 'Image'),
+                            _buildAttachButton(
+                                Icons.image_outlined, 'Image', c),
                             const SizedBox(width: 12),
-                            _buildAttachButton(Icons.link, 'Link'),
+                            _buildAttachButton(Icons.link, 'Link', c),
                             const SizedBox(width: 12),
                             _buildAttachButton(
                               Icons.document_scanner_outlined,
                               'Scan',
+                              c,
                             ),
                           ],
                         ),
@@ -168,7 +167,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _buildSaveButton(),
+                    child: _buildSaveButton(c),
                   ),
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 40)),
@@ -180,36 +179,36 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppThemeColors c) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 12, 24, 0),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new,
-              color: Colors.white,
+              color: c.textPrimary,
               size: 20,
             ),
           ),
           const SizedBox(width: 4),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'New Insight',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: c.textPrimary,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 'Capture something worth remembering',
                 style: TextStyle(
-                  color: _softGrey,
+                  color: c.textSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                 ),
@@ -225,24 +224,22 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
     required TextEditingController controller,
     required String hint,
     required int maxLines,
+    required AppThemeColors c,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: _cardBg,
+        color: c.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.06),
-          width: 1,
-        ),
+        border: Border.all(color: c.border, width: 1),
       ),
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: const TextStyle(color: Colors.white, fontSize: 15),
+        style: TextStyle(color: c.textPrimary, fontSize: 15),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(
-            color: _softGrey.withValues(alpha: 0.5),
+            color: c.textSecondary.withValues(alpha: 0.5),
             fontSize: 15,
           ),
           border: InputBorder.none,
@@ -252,7 +249,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
     );
   }
 
-  Widget _buildFolderChips() {
+  Widget _buildFolderChips(AppThemeColors c) {
     const folders = ['Work', 'Personal', 'Ideas', 'Research'];
     return Wrap(
       spacing: 10,
@@ -264,19 +261,17 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
-              color: isActive ? _accentColor : const Color(0xFF2A2750),
+              color: isActive ? c.folderActiveBg : c.folderInactiveBg,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isActive
-                    ? _accentColor
-                    : Colors.white.withValues(alpha: 0.1),
+                color: isActive ? c.folderActiveBg : c.folderInactiveBorder,
                 width: 1.5,
               ),
             ),
             child: Text(
               folder,
               style: TextStyle(
-                color: isActive ? Colors.white : Colors.white70,
+                color: isActive ? Colors.white : c.folderInactiveText,
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
               ),
@@ -287,26 +282,23 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
     );
   }
 
-  Widget _buildAttachButton(IconData icon, String label) {
+  Widget _buildAttachButton(IconData icon, String label, AppThemeColors c) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: _cardBg,
+          color: c.surface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.06),
-            width: 1,
-          ),
+          border: Border.all(color: c.border, width: 1),
         ),
         child: Column(
           children: [
-            Icon(icon, color: _accentColor, size: 22),
+            Icon(icon, color: c.accent, size: 22),
             const SizedBox(height: 6),
             Text(
               label,
-              style: const TextStyle(
-                color: _softGrey,
+              style: TextStyle(
+                color: c.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),
@@ -317,7 +309,7 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(AppThemeColors c) {
     return GestureDetector(
       onTap: () {
         // Save logic here
@@ -327,15 +319,15 @@ class _AddInsightScreenState extends State<AddInsightScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [_accentColor, Color(0xFF5A4FE8)],
+          gradient: LinearGradient(
+            colors: [c.fabPrimary, c.fabSecondary],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: _accentColor.withValues(alpha: 0.30),
+              color: c.fabPrimary.withValues(alpha: 0.30),
               blurRadius: 12,
               spreadRadius: 0,
               offset: const Offset(0, 4),
