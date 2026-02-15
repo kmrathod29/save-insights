@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/splash_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +12,7 @@ void main() {
       statusBarIconBrightness: Brightness.light,
       statusBarBrightness: Brightness.dark,
       systemNavigationBarColor: Color(0xFF1C1930),
-      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
   runApp(const SaveInsightApp());
@@ -39,7 +39,7 @@ class SaveInsightApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const MainShell(),
       },
     );
   }

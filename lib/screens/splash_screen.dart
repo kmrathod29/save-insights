@@ -100,7 +100,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 30,
-                  fontFamily: 'Sora',
+                  fontFamily: 'neuemachina',
                   fontWeight: FontWeight.bold,
                   letterSpacing: 0.5,
                 ),
@@ -111,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 style: TextStyle(
                   color: _softGrey,
                   fontSize: 15,
-                  fontFamily: 'neuemachina',
+                  fontFamily: 'playfairdisplay',
                   fontWeight: FontWeight.w400,
                 ),
               ),
