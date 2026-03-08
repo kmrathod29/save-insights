@@ -4,6 +4,61 @@ import '../auth/profile_screen.dart';
 import '../item/item_detail_screen.dart';
 import '../../models/insight.dart';
 
+// =========================
+// 🔹 Micro-Interaction: Scale-on-tap Wrapper
+// =========================
+class ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const ScaleButton({super.key, required this.child, this.onTap});
+
+  @override
+  State<ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<ScaleButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 120),
+    );
+    _scale = Tween<double>(begin: 1.0, end: 0.96).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _ctrl.forward(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        widget.onTap?.call();
+      },
+      onTapCancel: () => _ctrl.reverse(),
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder: (_, child) =>
+            Transform.scale(scale: _scale.value, child: child),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -40,10 +95,10 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Top Bar with Logo & Avatar
   // =========================
   Widget _buildTopBar(BuildContext context, AppThemeColors c) {
-    const double horizontalPadding = 24.0; // Main side padding
-    const double avatarRadius = 22.0; // Avatar size
-    const double logoHeight = 46.0; // Logo size
-    const double spacing = 14.0; // Space between logo and title
+    const double horizontalPadding = 24.0;
+    const double avatarRadius = 22.0;
+    const double logoHeight = 46.0;
+    const double spacing = 14.0;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -58,7 +113,7 @@ class HomeScreen extends StatelessWidget {
               'SaveInsight',
               style: TextStyle(
                 color: c.textPrimary,
-                fontFamily: 'neuemachina',
+                fontFamily: 'NeueMachina',
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
                 height: 1.0,
@@ -67,7 +122,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const Spacer(),
           // Profile avatar button
-          GestureDetector(
+          ScaleButton(
             onTap: () {
               Navigator.push(
                 context,
@@ -75,9 +130,8 @@ class HomeScreen extends StatelessWidget {
                   pageBuilder: (_, __, ___) => const ProfileScreen(),
                   transitionDuration: const Duration(milliseconds: 250),
                   reverseTransitionDuration: const Duration(milliseconds: 250),
-                  transitionsBuilder: (_, animation, __, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
+                  transitionsBuilder: (_, animation, __, child) =>
+                      FadeTransition(opacity: animation, child: child),
                 ),
               );
             },
@@ -88,7 +142,7 @@ class HomeScreen extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: c.cardShadow,
-                    blurRadius: 10, // Shadow blur intensity
+                    blurRadius: 10,
                     spreadRadius: 1,
                   ),
                 ],
@@ -109,28 +163,42 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Greeting Section
   // =========================
   Widget _buildGreetingSection(AppThemeColors c) {
-    const double horPadding = 24.0; // Horizontal padding
-    const double titleSpacing = 8.0; // Space between title and subtitle
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: horPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Good morning, Krunal',
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
+          // Greeting with name accent
+          RichText(
+            text: TextSpan(
+              style: TextStyle(
+                color: c.textPrimary,
+                fontSize: 25,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
+                height: 1.2,
+              ),
+              children: [
+                const TextSpan(text: 'Good morning,\n'),
+                TextSpan(
+                  text: 'Krunal 👋',
+                  style: TextStyle(
+                    color: c.accent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: titleSpacing),
+          const SizedBox(height: 10),
+          // Subtitle
           Text(
             'You have 5 new insights waiting',
             style: TextStyle(
               color: c.textSecondary,
               fontSize: 14,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.1,
             ),
           ),
         ],
@@ -142,64 +210,86 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Stats Section
   // =========================
   Widget _buildStatsSection(AppThemeColors c) {
-    const double horPadding = 24.0;
-    const double statSpacing = 12.0; // Space between stat cards
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: horPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Row(
         children: [
-          _buildStatCard('24', 'Insights', c),
-          const SizedBox(width: statSpacing),
-          _buildStatCard('8', 'Folders', c),
-          const SizedBox(width: statSpacing),
-          _buildStatCard('12', 'Favorites', c),
+          // Primary stat: Insights (wider + highlighted)
+          _buildStatCard('24', 'Insights', c, isPrimary: true, flex: 3),
+          const SizedBox(width: 10),
+          _buildStatCard('8', 'Folders', c, flex: 2),
+          const SizedBox(width: 10),
+          _buildStatCard('12', 'Favorites', c, flex: 2),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String value, String label, AppThemeColors c) {
-    const double padding = 16.0;
-    const double borderRadius = 16.0;
-    const double valueFontSize = 22.0;
-    const double labelFontSize = 12.0;
-    const double shadowBlur = 8.0;
-
+  Widget _buildStatCard(
+    String value,
+    String label,
+    AppThemeColors c, {
+    bool isPrimary = false,
+    int flex = 1,
+  }) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: padding),
-        decoration: BoxDecoration(
-          color: c.surface,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: c.border),
-          boxShadow: [
-            BoxShadow(
-              color: c.cardShadow,
-              blurRadius: shadowBlur,
-              offset: const Offset(0, 2),
+      flex: flex,
+      child: ScaleButton(
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: isPrimary ? 20 : 16,
+          ),
+          decoration: BoxDecoration(
+            // Primary card gets accent-tinted background
+            color: isPrimary
+                ? c.accent.withValues(alpha: c.isDark ? 0.16 : 0.08)
+                : c.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isPrimary
+                  ? c.accent.withValues(alpha: 0.25)
+                  : c.border,
+              width: isPrimary ? 1.5 : 1.0,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                color: c.textPrimary,
-                fontSize: valueFontSize,
-                fontWeight: FontWeight.bold,
+            boxShadow: [
+              BoxShadow(
+                color: isPrimary
+                    ? c.accent.withValues(alpha: c.isDark ? 0.12 : 0.08)
+                    : c.cardShadow,
+                blurRadius: isPrimary ? 14 : 8,
+                offset: const Offset(0, 3),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: c.textSecondary,
-                fontSize: labelFontSize,
+            ],
+          ),
+          child: Column(
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  color: isPrimary
+                      ? (c.isDark ? Colors.white : c.accent)
+                      : c.textPrimary,
+                  fontSize: isPrimary ? 28 : 22,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isPrimary
+                      ? (c.isDark
+                          ? Colors.white.withValues(alpha: 0.75)
+                          : c.accent.withValues(alpha: 0.80))
+                      : c.textSecondary,
+                  fontSize: 12,
+                  fontWeight:
+                      isPrimary ? FontWeight.w600 : FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -209,30 +299,20 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Quick Actions Section
   // =========================
   Widget _buildQuickActionsSection(AppThemeColors c) {
-    const double horPadding = 24.0;
-    const double actionSpacing = 12.0;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: horPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Quick Actions',
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
+          _buildSectionHeader('Quick Actions', null, c),
+          const SizedBox(height: 14),
           Row(
             children: [
-              _buildActionButton('New', Icons.add, c),
-              const SizedBox(width: actionSpacing),
-              _buildActionButton('Search', Icons.search, c),
-              const SizedBox(width: actionSpacing),
-              _buildActionButton('Share', Icons.share, c),
+              _buildActionButton('New Idea', Icons.add_circle_outline_rounded, c),
+              const SizedBox(width: 12),
+              _buildActionButton('Search', Icons.search_rounded, c),
+              const SizedBox(width: 12),
+              _buildActionButton('Share', Icons.ios_share_rounded, c),
             ],
           ),
         ],
@@ -241,31 +321,38 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildActionButton(String label, IconData icon, AppThemeColors c) {
-    const double padding = 12.0;
-    const double iconSize = 20.0;
-    const double fontSize = 11.0;
-    const double borderRadius = 12.0;
-
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: padding),
-        decoration: BoxDecoration(
-          color: c.surface,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: c.border),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: c.accent, size: iconSize),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                color: c.textSecondary,
-                fontSize: fontSize,
+      child: ScaleButton(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: c.surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: c.border),
+            boxShadow: [
+              BoxShadow(
+                color: c.cardShadow,
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
-            ),
-          ],
+            ],
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: c.accent, size: 24),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: c.textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -275,68 +362,84 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Folders Section
   // =========================
   Widget _buildFoldersSection(AppThemeColors c) {
-    const double horPadding = 24.0;
-    const double folderSpacing = 8.0;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: horPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'My Folders',
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildFolderItem('Work', 12, c),
-          const SizedBox(height: folderSpacing),
-          _buildFolderItem('Personal', 8, c),
-          const SizedBox(height: folderSpacing),
-          _buildFolderItem('Ideas', 4, c),
+          _buildSectionHeader('My Folders', 'View All', c),
+          const SizedBox(height: 14),
+          _buildFolderItem('Work', 12, Icons.work_outline_rounded, c),
+          const SizedBox(height: 10),
+          _buildFolderItem('Personal', 8, Icons.person_outline_rounded, c),
+          const SizedBox(height: 10),
+          _buildFolderItem('Ideas', 4, Icons.lightbulb_outline_rounded, c),
         ],
       ),
     );
   }
 
-  Widget _buildFolderItem(String name, int count, AppThemeColors c) {
-    const double padding = 14.0;
-    const double borderRadius = 12.0;
-    const double iconSize = 18.0;
-    const double iconSpacing = 12.0;
-
-    return Container(
-      padding: const EdgeInsets.all(padding),
-      decoration: BoxDecoration(
-        color: c.surface,
-        borderRadius: BorderRadius.circular(borderRadius),
-        border: Border.all(color: c.border),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.folder, color: c.accent, size: iconSize),
-          const SizedBox(width: iconSpacing),
-          Expanded(
-            child: Text(
-              name,
-              style: TextStyle(
-                color: c.textPrimary,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
+  Widget _buildFolderItem(
+      String name, int count, IconData icon, AppThemeColors c) {
+    return ScaleButton(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          // Slightly different from plain surface for contrast
+          color: c.surfaceSoft,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: c.border),
+          boxShadow: [
+            BoxShadow(
+              color: c.cardShadow,
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Folder icon in accent-tinted pill
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: c.accent.withValues(alpha: c.isDark ? 0.12 : 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: c.accent, size: 16),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                name,
+                style: TextStyle(
+                  color: c.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-          ),
-          Text(
-            '$count items',
-            style: TextStyle(
-              color: c.textSecondary,
-              fontSize: 12,
+            // Count badge
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+              decoration: BoxDecoration(
+                color: c.isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : const Color(0xFFE6E4F2),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '$count',
+                style: TextStyle(
+                  color: c.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -345,43 +448,21 @@ class HomeScreen extends StatelessWidget {
   // 🔹 Recent Insights Section
   // =========================
   Widget _buildRecentInsightsSection(BuildContext context, AppThemeColors c) {
-    const double horPadding = 24.0;
-    const double cardSpacing = 8.0;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: horPadding),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Recent Insights',
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
+          _buildSectionHeader('Recent Insights', 'View All', c),
+          const SizedBox(height: 14),
           _buildInsightCard(
-            context,
-            'Flutter Best Practices',
-            'Ideas',
-            c,
-          ),
-          const SizedBox(height: cardSpacing),
+              context, 'Flutter Best Practices', 'Ideas', '2h ago', c),
+          const SizedBox(height: 10),
           _buildInsightCard(
-            context,
-            'Team Meeting Notes',
-            'Work',
-            c,
-          ),
-          const SizedBox(height: cardSpacing),
+              context, 'Team Meeting Notes', 'Work', '4h ago', c),
+          const SizedBox(height: 10),
           _buildInsightCard(
-            context,
-            'Project Ideas',
-            'Ideas',
-            c,
-          ),
+              context, 'Project Ideas', 'Ideas', 'Yesterday', c),
         ],
       ),
     );
@@ -391,17 +472,12 @@ class HomeScreen extends StatelessWidget {
     BuildContext context,
     String title,
     String folder,
+    String timeAgo,
     AppThemeColors c,
   ) {
-    const double padding = 14.0;
-    const double borderRadius = 12.0;
-    const double shadowBlur = 4.0;
-    const double titleFontSize = 14.0;
-    const double folderFontSize = 12.0;
-
-    return GestureDetector(
+    return ScaleButton(
       onTap: () {
-        // Navigate to detail screen with fade transition
+        // Navigate to detail with fade transition
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -414,54 +490,110 @@ class HomeScreen extends StatelessWidget {
             ),
             transitionDuration: const Duration(milliseconds: 250),
             reverseTransitionDuration: const Duration(milliseconds: 250),
-            transitionsBuilder: (_, animation, __, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
+            transitionsBuilder: (_, animation, __, child) =>
+                FadeTransition(opacity: animation, child: child),
           ),
         );
       },
       child: Container(
-        padding: const EdgeInsets.all(padding),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: c.surface,
-          borderRadius: BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: c.border),
           boxShadow: [
             BoxShadow(
               color: c.cardShadow,
-              blurRadius: shadowBlur,
-              offset: const Offset(0, 1),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: c.textPrimary,
-                fontSize: titleFontSize,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  folder,
-                  style: TextStyle(
-                    color: c.accent,
-                    fontSize: folderFontSize,
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: c.textPrimary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Icon(Icons.favorite_border, color: c.textSecondary, size: 16),
+                const SizedBox(width: 8),
+                Icon(Icons.bookmark_border_rounded,
+                    color: c.textSecondary, size: 18),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                // Folder chip
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: c.accent.withValues(alpha: c.isDark ? 0.15 : 0.08),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    folder,
+                    style: TextStyle(
+                      color: c.accent,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  timeAgo,
+                  style: TextStyle(
+                    color: c.textSecondary,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // =========================
+  // 🔹 Reusable Section Header
+  // =========================
+  Widget _buildSectionHeader(
+      String title, String? actionLabel, AppThemeColors c) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: c.textPrimary,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.2,
+          ),
+        ),
+        if (actionLabel != null)
+          Text(
+            actionLabel,
+            style: TextStyle(
+              color: c.accent,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+      ],
     );
   }
 }
