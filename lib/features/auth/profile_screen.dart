@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/theme/app_theme_colors.dart';
+import '../../core/theme/app_theme_colors.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -24,19 +24,25 @@ class ProfileScreen extends StatelessWidget {
 
           SafeArea(
             child: CustomScrollView(
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: ClampingScrollPhysics(),
               ),
               slivers: [
-                // Back button + title
+                // =========================
+                // 🔹 Header with Back Button
+                // =========================
                 SliverToBoxAdapter(child: _buildHeader(context, c)),
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
-                // Avatar
+                // =========================
+                // 🔹 Avatar Section
+                // =========================
                 SliverToBoxAdapter(child: _ProfileAvatar(colors: c)),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                // Name & email
+                // =========================
+                // 🔹 User Info
+                // =========================
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
@@ -62,7 +68,9 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
-                // Profile options
+                // =========================
+                // 🔹 Profile Options
+                // =========================
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),

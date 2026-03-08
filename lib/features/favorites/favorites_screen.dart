@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../core/theme/app_theme_colors.dart';
+import '../../core/theme/app_theme_colors.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -8,8 +8,13 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = AppThemeColors.of(context);
 
+    // =========================
+    // 🔹 Favorites Screen
+    // =========================
     return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: ClampingScrollPhysics(),
+      ),
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
@@ -17,6 +22,9 @@ class FavoritesScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // =========================
+                // 🔹 Title
+                // =========================
                 Text(
                   'Favorites',
                   style: TextStyle(
@@ -27,10 +35,18 @@ class FavoritesScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 60),
+                
+                // =========================
+                // 🔹 Empty State Message
+                // =========================
                 Center(
                   child: Column(
                     children: [
-                      Icon(Icons.favorite_border, size: 64, color: c.textSecondary.withValues(alpha: 0.4)),
+                      Icon(
+                        Icons.favorite_border,
+                        size: 64,
+                        color: c.textSecondary.withValues(alpha: 0.4),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'No favorites yet',

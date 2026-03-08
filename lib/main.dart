@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
-import 'screens/splash_screen.dart';
-import 'screens/main_shell.dart';
+import 'features/auth/splash_screen.dart';
+import 'main_shell.dart';
 
 final ThemeProvider _themeProvider = ThemeProvider();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await _themeProvider.init(); // load persisted theme before first frame
   runApp(SaveInsightApp(themeProvider: _themeProvider));
 }
 
